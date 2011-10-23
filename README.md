@@ -1,5 +1,7 @@
 This is the repository of a state-of-the-art report of work on group navigation for autonomous entities.
 
+Its last *tagged* version is available online [here](http://www.scribd.com/doc/60334555/Group-Navigation-State-of-the-art-report).
+
 ### License ###
 
 ![Creative Commons License](http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png)
