@@ -1,6 +1,6 @@
 This is the repository of a state-of-the-art report of work on group navigation for autonomous entities.
 
-Its last *tagged* version is available online [here](http://www.scribd.com/doc/60334555/Group-Navigation-State-of-the-art-report).
+Its last *tagged* version is available online [here](http://www.crowdscontrol.net/group-navigation-state-of-the-art-report-down).
 
 ### License ###
 
