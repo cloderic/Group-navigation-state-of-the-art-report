@@ -12,7 +12,7 @@
 \author{
 	Clodéric Mars - Golaem \\ 
 	\small \href{mailto:cloderic.mars@gmail.com}{cloderic.mars@gmail.com}\\
-	\small \href{http://www.crowdscontrol.net}{www.crowdscontrol.net} -- \href{http://www.golaem.com}{www.golaem.com}}
+	\small \href{http://www.crowdscontrol.net}{www.crowdscontrol.net} -- \href{http://www.golaem.com}{www.golaem.com}}\\
 \title{Group navigation state-of-the-art report}
 \date{}
 
@@ -40,6 +40,7 @@ pdflang={en}
 \hline
 \dmyyyydate{\formatdate{21}{6}{2011}} & Initial version.\\ \hline
 \dmyyyydate{\formatdate{17}{10}{2011}} & First final \LaTeX version. \\ \hline
+\dmyyyydate{\formatdate{8}{11}{2011}} & Section \ref{sec:stay_grouped:choreography} partially rewritten following the addition of \cite{Gu:2011wp}. \\ \hline
 \end{tabular}
 
 \section*{License}
@@ -49,9 +50,16 @@ This work is licensed under the Creative Commons Attribution-NonCommercial-Share
 \section{Introduction}
 \label{sec:introduction}
 
-Autonomous human-like characters being able to navigate in a 3D environment finding their paths and avoiding collisions while exhibiting a convincing behavior is now fairly common. The popularity and the quality of recent work \cite{vandenBerg:2008tu,Pettre:2009tg,Ondrej:2010we,Mononen:2010wp} shows that the simulation of hundreds of navigating entities is now within the reach of almost everyone. But most of these work focus on simulating lonely entities taking their neighbors into account only to avoid collisions. Like real ones, our virtual humans should be able to walk down the road with their group of friends. Like real ones, our virtual soldiers must be able to march on enemy positions while staying in formation. And like real ones, our virtual tourists have to be able to enjoy their tour of the Mont Saint-Michel following their guide’s umbrella.
+Autonomous human-like characters being able to navigate in a 3D environment finding their paths and avoiding collisions while exhibiting a convincing behavior are now fairly common. The popularity and the quality of recent work \cite{vandenBerg:2008tu,Pettre:2009tg,Ondrej:2010we,Mononen:2010wp} allows anyone to simulate hundreds of navigating entities. Most of these works, though, focus on simulating lonely entities interacting with their neighbors only to avoid collisions. Group navigation is often neglected. But like real ones, our virtual humans should be able to walk down the road with their group of friends. Like real ones, our virtual soldiers must be able to march on enemy positions while staying in formation. And like real ones, our virtual tourists have to be able to enjoy their tour of the Mont Saint-Michel following their guide’s umbrella.
 
-Before we start designing and implementing group navigation behaviors in Golaem Path \cite{GolaemPath:tw}, let’s first see what others have done. This document is a state-of-the-art study of existing work concerning group and formations navigation with a focus on algorithms and implementations. The first part defines the different categories of navigating groups we’re interested in. The second section focuses on how the group members can stay grouped or in formation during navigation. The third and last section talks about the group’s navigation from path planning to steering and collision avoidance.
+Before I started designing and implementing group navigation behaviors in Golaem Path \cite{GolaemPath:tw}, I first took a look at what others had done. Having not found such document during my bibliographical study, I wrote it: this is a state-of-the-art study focusing on group and formation navigation with a focus on algorithms and implementations. The first section defines the different categories of navigating groups. The second section focuses on how the group members can stay grouped or in formation during navigation. The third and last section talks about the group’s navigation from path planning to steering and collision avoidance.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{SheepsHerd.jpg}
+\caption{Sheep flock (from~\url{http://flic.kr/p/Yuy89}).}
+\label{fig:sheep_flock}
+\end{figure}
 
 \section{Taxonomy}
 \label{sec:taxonomy}
@@ -62,14 +70,7 @@ Before we talk velocity, steering behaviors and gradient descent, let’s first 
 \subsection{Flocks}
 \label{sec:taxonomy:flocks}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{SheepsHerd.jpg}
-\caption{Sheep flock (from~\url{http://flic.kr/p/Yuy89}).}
-\label{fig:sheep_flock}
-\end{figure}
-
-A flock is primarily a group of bird traveling together but it can be applied to other animal species (cf.\ figure~\ref{fig:sheep_flock}) as well as humans (e.g.\ a flock of school children is crossing the street to the swimming pool). Entities in a flock travel at roughly the same speed and form a cohesive group without strict arrangement. In what must be the two most cited articles in the field \cite{Reynolds:1987vm,Reynolds:1999vr}, Reynolds studied empirically how flocks members move relatively to each others. With simple behaviors he was able to recreate a flock of autonomous entities, we’ll dig into more details in section~\ref{sec:stay_grouped:emergence}.
+A flock is, by definition, a group of bird traveling together but it can be applied to other animal species, sheeps in figure~\ref{fig:sheep_flock} or even extended to humans (e.g.\ a flock of school children is crossing the street to the swimming pool). Entities in a flock travel at roughly the same speed and form a cohesive group without strict arrangement. In what must be the two most cited articles in the field \cite{Reynolds:1987vm,Reynolds:1999vr}, Reynolds studied empirically how flocks members move relatively to each others. With simple behaviors he was able to recreate a flock of autonomous entities, we’ll dig into more details in section~\ref{sec:stay_grouped:emergence}.
 
 \subsection{Formations}
 \label{sec:taxonomy:formations}
@@ -81,7 +82,7 @@ A flock is primarily a group of bird traveling together but it can be applied to
 \label{fig:bastille_day}
 \end{figure}
 
-While flocks do not follow more rules than the cohesion of the group, formations are a kind of group arrangement where members need to enforce strict rules. Both in a combat or a parade (cf.\ figure~\ref{fig:bastille_day}), the spatial arrangement, i.e. the relative positions of members, is designed for a precise purpose, tactic or aesthetic; it is the first rule that needs to be followed. Secondly, in a combat context, formation gets much of its usefulness from overlapping fields of fire and sight, that’s why the orientation is another rule to be followed \cite{Dawson:2002vd}. The last rule is to assign entities having the right role to the right slot: archers at the back, footsoldiers facing the enemy. As navigation and military simulation are important for real time strategy games, interesting and working solutions has been developed early: Dave Pottinger, who worked on the Age of Empire series, presented his in a Gamasutra article \cite{Pottinger:1999vk}.
+While flocks do not follow rules beyond the cohesion of the group, formations are a kind of group arrangement where members need to enforce strict rules. Both in a combat or a parade (cf.\ figure~\ref{fig:bastille_day}), the spatial arrangement, i.e.\ the relative positions of members, is designed for a precise purpose, tactic or aesthetic; it is the first rule that needs to be followed. Secondly, in a combat context, a formation gets much of its usefulness from overlapping fields of fire and sight, that’s why the orientation is another rule to be followed \cite{Dawson:2002vd}. The last rule is to assign entities having the right role to the right slot: archers at the back, footsoldiers facing the enemy. As navigation and military simulation are important for real time strategy games, interesting and working solutions has been developed early: Dave Pottinger, who worked on the Age of Empire series, presented his in a Gamasutra article \cite{Pottinger:1999vk}.
 
 \subsection{Small social groups}
 \label{sec:taxonomy:small_social_groups}
@@ -101,26 +102,26 @@ While flocks do not follow more rules than the cohesion of the group, formations
 \end{figure}
 
 Beyond amorphous flocks and rigid military formations, groups that are more common in our everyday life are small and their spatial configuration is the result of social factors and crowd density. Two recent survey focuses on those small social groups \cite{Peters:2009kx,Moussaid:2010ib}, they lead to the same conclusions.
-The two studies were conducted from videos taken at public spaces (in France and Ireland). Their observations show that: there are more groups than single pedestrians, groups of more than four are very rare and most of the groups are, indeed, pairs.
+The two studies were conducted from videos taken at public spaces (in France and Ireland). Their observations show that, in a urban crowd, there are more groups than single pedestrians, groups of more than four are very rare and most of the groups are, indeed, pairs.
 
-More interesting, it appears the formation adopted by the observed groups is influenced both by the lateral clearance to nearby obstacles and by the social interaction between members of the group (cf.\ figure~\ref{fig:social_groups}). When motion is not constrained (i.e.\ when obstacles are far and the crowd density is low) a group tends to adopt an abreast formation that facilitates dialog between its members. When facing navigation constraints, to reduce its frontal width, the group compact the formation. And when the lateral space between each member become too thin, i.e.\ when members are shoulder-to-shoulder, the formation is staggered. The bending of the group is, most of the time, forward (V-like formation) to maintain good communication when a backward bending (inversed-V-like or wedge formation) would be more flexible moving against an opposite flow.
+Furthermore, it appears that the formation adopted by the observed groups is influenced both by the lateral clearance to nearby obstacles and by the need of social interaction between members of the group (cf.\ figure~\ref{fig:social_groups}). When motion is not constrained (i.e.\ when obstacles are far and the crowd density is low) a group tends to adopt an abreast formation that facilitates dialog between its members. When facing navigation constraints, to reduce its frontal width, the group compact the formation. And when the lateral space between each member become too thin, i.e.\ when members are shoulder-to-shoulder, the formation is staggered. The bending of the group is, most of the time, forward (V-like formation) to maintain good communication when a backward bending (inversed-V-like or wedge formation) would be more flexible moving against an opposite flow.
 
-Finally, while groups tend to avoid collisions, with other pedestrians or with obstacles, as a whole they are able to split if needed merging back afterwards (cf.\ figure~\ref{fig:social_groups_splitting}).
+Finally, while groups tend to avoid collisions, with other pedestrians or with obstacles as a whole, they are able to split if needed merging back afterwards (cf.\ figure~\ref{fig:social_groups_splitting}).
 
 \section{Stay Grouped!}
 \label{sec:stay_grouped}
 \sectionsubtitle{How members enforce group constraints}
 
-In order to get a valid simulation of group navigation we first have to design the behavior of the group members. In this section we’ll study two families of methods to obtain groups: using local rules or following a designed formation. Finally we’ll focus on how a member’s individual navigation behavior is affected when part of a group.
+In order to get a valid simulation of group navigation we first have to design the behavior of the group members. In this section we’ll study two families of methods to obtain groups: using local rules or following a designed formation. Finally we’ll focus on how a member’s individual navigation behavior is affected when it is a part of a group. In this section, the term \emph{group's anchor} is used to designate the group's reference position and orientation, it will be properly defined in section \ref{sec:who_s_in_charge:anchor}.
 
 \subsection{Emergence}
 \label{sec:stay_grouped:emergence}
 
-In most modern navigation engine, the simulated entities are autonomous, their behavior rely on their local "perception” to take action not on an external choreographer. With this approach in mind, several works relies on decentralized behavior to enforce group constraints.
+In most modern navigation engine, the simulated entities are autonomous, their behavior rely on their local "perception” to take action, not on an external choreographer. With this approach in mind, several works relies on decentralized behavior to enforce group constraints.
 
 \subsubsection{Flocking}
 
-At the core of Reynolds’ work \cite{Reynolds:1987vm,Reynolds:1999vr}, three steering behaviors (cf.\ figure~\ref{fig:flocking_steering_behaviors}) allows entities to flock. For any given entity in the group, separation makes him move apart too close neighbors, alignment makes him go in the same direction as other members and cohesion makes him move towards the group’s COM (center of mass). These simple behaviors allow the emergence of a flock. Others took inspiration from this work and adapt it to their architecture using voting steering behaviors \cite{Hostetler:2002wg} or relying on specific environment abstraction such as grids \cite{Loscos:2003wh} or roadmaps \cite{Bayazit:2003up,Kamphuis:2004ct}.
+At the core of Reynolds’ work \cite{Reynolds:1987vm,Reynolds:1999vr}, three steering behaviors (cf.\ figure~\ref{fig:flocking_steering_behaviors}) allows entities to flock. For any given entity in the group, separation makes him move away from close neighbors, alignment makes him go in the same direction as other members and cohesion makes him move towards the group’s anchor. These simple behaviors allow the emergence of a flock. Others took inspiration from this work and adapt it to their architecture using voting steering behaviors \cite{Hostetler:2002wg} or relying on specific environment abstraction such as grids \cite{Loscos:2003wh} or roadmaps \cite{Bayazit:2003up,Kamphuis:2004ct}.
 
 \begin{figure}[h]
 \centering
@@ -131,7 +132,7 @@ At the core of Reynolds’ work \cite{Reynolds:1987vm,Reynolds:1999vr}, three st
 
 \subsubsection{Social relations}
 
-In his recent paper, Moussaïd \cite{Moussaid:2010ib}, extends the social force model \cite{Helbing:2000vh} to obtain flocking as well as more structured small formation introducing a communication force. The gaze of group members is attracted by the center of interest of the group; here its center of mass (COM) is used. The communication force tries to limit the gaze deviation by decelerating the entity thus enabling the observed V-like formation (cf.\ section~\ref{sec:taxonomy:small_social_groups}).
+In his recent paper, Moussaïd \cite{Moussaid:2010ib}, extends the social force model \cite{Helbing:2000vh} to obtain flocking as well as more structured small formation introducing a communication force. The gaze of group members is attracted by the center of interest of the group. The communication force tries to limit the gaze deviation by decelerating the entity thus enabling the observed V-like formation (cf.\ section~\ref{sec:taxonomy:small_social_groups}).
 
 In order to take into account social relations between members of the group, Qiu uses a member-to-member influence matrix \cite{Qiu:2010ks}. This matrix is taken into account when computing the attraction between members of the group. This approach allows the definition of one or more attractive (or repulsive) members of the group such as more talkative persons or tourist guides.
 
@@ -153,11 +154,11 @@ While groups whose members are implementing local rules can exhibit convincing b
 
 \subsubsection{Design}
 
-In the context of navigation, a formation is the specification of the spatial arrangement of the slots the members of the group are assigned to. As we're only concerned by pedestrians walking a ground, each slot has a 2D position ; for some uses cases, two properties might be added (cf.\ \ref{sec:taxonomy:formations}), an orientation, and a role (i.e.\ which kind of entity should be assigned to this slot). The slots are defined relatively to the group's anchor, defined in section \ref{sec:who_s_in_charge:anchor}.
+In the context of navigation, a formation is the specification of the spatial arrangement of the slots the members of the group are assigned to. As we're only concerned by pedestrians walking a ground, each slot has a 2D position ; for some uses cases, two properties might be added (cf.\ \ref{sec:taxonomy:formations}), an orientation, and a role (i.e.\ which kind of entity should be assigned to this slot). The slots are defined relatively to the group's anchor.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{SketchedFormations.jpg}
+\includegraphics[width=1.0\textwidth]{SketchedFormations.jpg}
 \caption{Generating arbitrary formations through inclusion sketch, in white, and exclusion sketch, in red (from~\cite{Gu:2011wp}).}
 \label{fig:sketched_formations}
 \end{figure} 
@@ -172,9 +173,9 @@ The slots specification can come from different sources for different use cases.
 \end{figure} 
 
 \subsubsection{Assign}
-We now assume the formation design is chosen and defines as many slots as group members; if not, simple techniques can be used to select the used slots or create needed slots \cite{Silveira:2008bc}. The next needed step before our entities can navigate as a group, is to assign each of them to a slot. This part might seem trivial but should be implemented right to avoid destroying the simulation credibility with traffic jams between members of the same groups.
+We now assume the formation design is chosen and defines as many slots as group members; if not, simple techniques can be used to select the used slots or create needed slots \cite{Silveira:2008bc}. The next needed step before our entities can navigate as a group, is to assign each of them to a slot. This part might seem trivial but should be implemented with care to avoid traffic jams between members of the same groups that will affect the credibility of the simulation.
 
-Implementation-oriented papers \cite{Dawson:2002vd,Millington:2006wz} describe different solutions and their quality. As everyone should expect, random or index-based (i\textsuperscript{th} members with i\textsuperscript{th} slot) assignment are most of the time really bad: the entities might have to cross each others and to circle around the group to get to their slot. To avoid this bad result, one solution could be to, sequentially assign to each entity, its closest free spot, this solution is easy to implement and might work but last entities might end up to far slots as the closest one are already taken. The best solutions would be to globally minimize the distance the entities are covering to get to their slots but its implementation would lead to an $O(n!)$ complexity as every permutation would have to be tested. 
+Implementation-oriented papers \cite{Dawson:2002vd,Millington:2006wz} describe different solutions and their pros and cons. As everyone should expect, random or index-based (i\textsuperscript{th} members with i\textsuperscript{th} slot) assignment are most of the time really bad: the entities might have to cross each others or to circle around the group to get to their slot. To avoid this bad result, one solution could be to, sequentially assign to each entity, its closest free spot, this solution is easy to implement and might work but last entities might end up to far slots as the closest one are already taken. The best solutions would be to globally minimize the distance the entities are covering to get to their slots but its implementation would lead to an $O(n!)$ complexity as every permutation would have to be tested. 
 
 One solution to get a good result and keep a good complexity is a two steps process. First compute for each members of the group what is their cost to be assigned to which slot, allowing certain slot to be specialized for certain entity roles. Then, from the most expensive to assign to the cheapest assign entities to their preferred available slot. This solution might fail to get the optimal assignment but should have decent result while keeping a low complexity $O(n^2)$
 \cite{Millington:2006wz}.
@@ -209,7 +210,7 @@ In the previous section, we've studied how group members are able to maintain co
 \label{sec:who_s_in_charge:anchor}
 
 While some behavior might be decentralized (cf.\ section~\ref{sec:stay_grouped:emergence}), in order to leverage groups in a context where we need to make them go from A to B, top-down decision making is needed \cite{MusTha2001}. A group level process will be able to make the group move while each of its member follows. 
-We call anchor a virtual object that group members use as a reference for their formation or flocking behaviors and to which they delegate some navigation processes. It aggregates various data relative to the group, such as its position, orientation and velocity and it’s where the group level decision-making is done.
+We call anchor a virtual object that group members use as a reference for their formation or flocking behaviors and to which they delegate some navigation processes. It aggregates various data relative to the group, such as its position, orientation and velocity and it’s "where" the group level decision-making is done.
 
 \subsubsection{Leader}
 
@@ -221,7 +222,7 @@ But the leader can’t reuse the exact same processes of an independent entity. 
 
 \subsubsection{Group entity}
 
-Noting that the leader-based approach as several flaws, a growing proportion of architectures chose to move the group anchor from the leader to a virtual group entity \cite{Schuerman:2010um,Silveira:2008bc,Karamouzas:2010fi}. This virtual entity is similar to any other simulated entities but doesn’t have visual or physic (i.e. regarding collision detection) representation. In such architecture, the group members are identical to one another. 
+Noting that the leader-based approach as several flaws, a growing proportion of architectures chose to move the group anchor from the leader to a virtual group entity \cite{Schuerman:2010um,Silveira:2008bc,Karamouzas:2010fi}. This virtual entity is similar to any other simulated entities but doesn’t have visual or physical (i.e. regarding collision detection) representation. In such architecture, the group members are identical to one another. 
 In Schuerman et al. \cite{Schuerman:2010um} work, other entities detect groups entities during their collision avoidance process, trying to avoid collisions with groups as the whole. Entities are thus able to simulate the fact that pedestrians tend to avoid to pass through a group.
 
 The group entity creates a one level deep hierarchy of entities. This approach can be taken a step further to create groups of groups and so on \cite{Schuerman:2010um,Millington:2006wz} allowing a more structured crowd.
@@ -265,7 +266,7 @@ Those group level navigation methods allows the group to take responsibility for
 
 This review was limited to the navigation aspect of the group, it is supposed to answer to the question: \emph{“How to make a group navigate in my simulation/game?”}. A group is, most of the time, the result of social interactions and relations between individuals that have other consequences beyond navigation strategy: body language, facial expressions, and speech… For a simulated group to be believable those other aspects must be addressed.
 
-This state-of-the art study was instrumental in the design of Golaem Path upcoming group navigation features \cite{GolaemPath:tw}. I hope others developers or even researchers in the field will find it useful. I’ll try to update its content as other works come to my knowledge or are published.
+This state-of-the art study was instrumental in the design of Golaem Path group navigation features \cite{GolaemPath:tw}. I hope others developers or even researchers in the field will find it useful. I’ll try to update its content as other works come to my knowledge or are published. 
 
 \pagebreak
 \bibliographystyle{alphaurl}
