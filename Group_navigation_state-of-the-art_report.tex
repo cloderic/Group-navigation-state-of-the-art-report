@@ -155,7 +155,14 @@ While groups whose members are implementing local rules can exhibit convincing b
 
 In the context of navigation, a formation is the specification of the spatial arrangement of the slots the members of the group are assigned to. As we're only concerned by pedestrians walking a ground, each slot has a 2D position ; for some uses cases, two properties might be added (cf.\ \ref{sec:taxonomy:formations}), an orientation, and a role (i.e.\ which kind of entity should be assigned to this slot). The slots are defined relatively to the group's anchor, defined in section \ref{sec:who_s_in_charge:anchor}.
 
-Such a formation definition can be designed manually following military principles or artistic concerns \cite{Dawson:2002vd,Gu:2011wp}. Another approach has been taken by Karamouzas and Overmars \cite{Karamouzas:2010fi}, they extracted from the data collected by Moussaïd et al. \cite{Moussaid:2010ib} a set of typical formations for small social groups of 2 to 4 members. The figure~\ref{fig:social_group_formations} shows the three kinds of formations they get for groups of 3; similar formations are obtained for groups of 2 or 4. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{SketchedFormations.jpg}
+\caption{Generating arbitrary formations through inclusion sketch, in white, and exclusion sketch, in red (from~\cite{Gu:2011wp}).}
+\label{fig:sketched_formations}
+\end{figure} 
+
+The slots specification can come from different sources for different use cases. In a military formation, tactical rules defines how different types of soldiers must be placed depending on their purpose, their doctrine, their opponents or the environmental constraints \cite{Dawson:2002vd}. Similar rules, but with an aesthetic goal, are used for parades. When animating a crowd for a movie, a video game or any artistic material, what's important is the author direction. For this use case, Gu and Deng proposed a sheme allowing formations to be extracted from artist sketches (cf.\ figure~\ref{fig:sketched_formations}) \cite{Gu:2011wp}. In order to simulate realistic groups of pedestrians, Karamouzas and Overmars \cite{Karamouzas:2010fi} extracted from the data collected by Moussaïd et al.\ \cite{Moussaid:2010ib} a set of typical formations for small social groups of 2 to 4 members. The figure~\ref{fig:social_group_formations} shows the three kinds of formations they get for groups of 3; similar formations are obtained for groups of 2 or 4. 
 
 \begin{figure}[h]
 \centering
