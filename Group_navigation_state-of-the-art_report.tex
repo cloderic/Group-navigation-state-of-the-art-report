@@ -153,9 +153,9 @@ While groups whose members are implementing local rules can exhibit convincing b
 
 \subsubsection{Design}
 
-A formation is basically a list of slots to which members of the group will be assigned. As we focus on pedestrian navigation, a slot is basically a 2D position relative to the group “center”. In a military context two properties of the slot must be added, as we saw in section \ref{sec:taxonomy:formations}: the orientation and the role (i.e.\ which kind of entity should be assigned to this slot).
+In the context of navigation, a formation is the specification of the spatial arrangement of the slots the members of the group are assigned to. As we're only concerned by pedestrians walking a ground, each slot has a 2D position ; for some uses cases, two properties might be added (cf.\ \ref{sec:taxonomy:formations}), an orientation, and a role (i.e.\ which kind of entity should be assigned to this slot). The slots are defined relatively to the group's anchor, defined in section \ref{sec:who_s_in_charge:anchor}.
 
-Such a formation definition can be designed manually following military principles or artistic concerns \cite{Dawson:2002vd}.  Another approach has been taken by Karamouzas and Overmars \cite{Karamouzas:2010fi}, they extracted from the data collected by Moussaïd et al. \cite{Moussaid:2010ib} a set of typical formations for small social groups of 2 to 4 members. The figure~\ref{fig:social_group_formations} shows the three kinds of formations they get for groups of 3; similar formations are obtained for groups of 2 or 4. 
+Such a formation definition can be designed manually following military principles or artistic concerns \cite{Dawson:2002vd,Gu:2011wp}. Another approach has been taken by Karamouzas and Overmars \cite{Karamouzas:2010fi}, they extracted from the data collected by Moussaïd et al. \cite{Moussaid:2010ib} a set of typical formations for small social groups of 2 to 4 members. The figure~\ref{fig:social_group_formations} shows the three kinds of formations they get for groups of 3; similar formations are obtained for groups of 2 or 4. 
 
 \begin{figure}[h]
 \centering
