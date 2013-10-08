@@ -8,3 +8,6 @@ Its last *tagged* version is available online [here](http://www.crowdscontrol.ne
 
 This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
 To view a copy of this license, visit [this page](http://creativecommons.org/licenses/by-nc-sa/3.0/).
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/cloderic/group-navigation-state-of-the-art-report/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
